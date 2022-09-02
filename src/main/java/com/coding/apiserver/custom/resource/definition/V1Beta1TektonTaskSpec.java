@@ -1,6 +1,5 @@
 package com.coding.apiserver.custom.resource.definition;
 
-import io.kubernetes.client.openapi.models.V1Container;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ public class V1Beta1TektonTaskSpec {
 
     private String description;
 
-    private List<V1Beta1TektonParam> params;
+    private List<V1Beta1TektonTaskParam> params;
 
     private List<V1Beta1TektonResult> results;
 

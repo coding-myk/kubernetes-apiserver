@@ -1,5 +1,6 @@
 package com.coding.apiserver.custom.resource.definition;
 
+import com.google.gson.annotations.SerializedName;
 import io.kubernetes.client.openapi.models.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,11 +29,18 @@ public class V1Beta1TektonTaskRunOrPipelineRunWorkspace {
     @ApiModelProperty(value = "volumeClaimTemplate",notes = "创建 pvc 所需要的信息")
     private VolumeClaimTemplate volumeClaimTemplate;
 
-
     @ApiModelProperty(value = "persistentVolumeClaim", notes = "已经存在的 pvc")
     private PersistentVolumeClaim persistentVolumeClaim;
 
+    private V1EmptyDirVolumeSource emptyDir;
 
+    private V1ConfigMapVolumeSource configMap;
+
+    private V1SecretVolumeSource secret;
+
+    private V1ProjectedVolumeSource projected;
+
+    private V1CSIVolumeSource csi;
 
     @Builder
     @NoArgsConstructor

@@ -22,7 +22,7 @@ import java.util.List;
 public class V1Beta1TektonTaskRunSpec {
 
 
-    private List<V1Beta1TektonParam> params;
+    private List<V1Beta1TektonTaskRunParam> params;
 
     private String serviceAccountName;
 
