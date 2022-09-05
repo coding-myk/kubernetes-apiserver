@@ -21,15 +21,15 @@ public class V1Beta1TektonStep {
 
     private String image;
 
-    private String workingDir;
-
     private List<String> command;
 
     private List<String> args;
 
-    private List<V1EnvVar> env;
+    private String workingDir;
 
     private List<V1EnvFromSource> envFrom;
+
+    private List<V1EnvVar> env;
 
     private V1ResourceRequirements resources;
 

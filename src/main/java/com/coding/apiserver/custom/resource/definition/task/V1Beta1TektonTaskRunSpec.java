@@ -2,11 +2,8 @@ package com.coding.apiserver.custom.resource.definition.task;
 
 
 import com.coding.apiserver.custom.resource.definition.*;
-import io.kubernetes.client.openapi.models.V1PodSpec;
-import io.kubernetes.client.openapi.models.V1PodTemplate;
-import io.kubernetes.client.openapi.models.V1PodTemplateSpec;
+import io.kubernetes.client.openapi.models.V1ResourceRequirements;
 import io.kubernetes.client.openapi.models.V1Volume;
-import io.kubernetes.client.proto.V1;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +20,7 @@ public class V1Beta1TektonTaskRunSpec {
 
     private TaskRunDebug debug;
 
-    private List<V1Beta1TektonRunParam> params;
+    private List<V1Beta1TektonRunParam<?>> params;
 
     private String serviceAccountName;
 
@@ -37,9 +34,16 @@ public class V1Beta1TektonTaskRunSpec {
 
     private String timeout;
 
-    private V1PodSpec podTemplate;
+    private V1Beta1TektonPodTemplate podTemplate;
 
     private List<V1Beta1TektonWorkspaceBinding> workspaces;
+
+    private List<V1Beta1TektonOverride> stepOverrides;
+
+    private List<V1Beta1TektonOverride> sidecarOverrides;
+
+    private V1ResourceRequirements computeResources;
+
 
 
     @Builder
@@ -58,7 +62,7 @@ public class V1Beta1TektonTaskRunSpec {
     @Data
     public static class TaskSpec {
 
-        private List<V1Beta1TektonParam> params;
+        private List<V1Beta1TektonParam<?>> params;
 
         private String description;
 
@@ -80,6 +84,7 @@ public class V1Beta1TektonTaskRunSpec {
     @AllArgsConstructor
     @Data
     public static class TaskRef {
+
         private String name;
 
         private String kind;

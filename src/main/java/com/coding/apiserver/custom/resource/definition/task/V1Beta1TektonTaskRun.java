@@ -1,5 +1,6 @@
 package com.coding.apiserver.custom.resource.definition.task;
 
+import com.coding.apiserver.custom.resource.definition.V1Beta1TektonSidecarState;
 import io.kubernetes.client.openapi.models.V1ContainerStateRunning;
 import io.kubernetes.client.openapi.models.V1ContainerStateTerminated;
 import io.kubernetes.client.openapi.models.V1ContainerStateWaiting;
@@ -37,15 +38,25 @@ public class V1Beta1TektonTaskRun {
     @Data
     public static class TaskRunStatus {
 
-        private OffsetDateTime completionTime;
-
-        private List<TaskRunStatusCondition> conditions;
 
         private String podName;
 
         private OffsetDateTime startTime;
 
+        private OffsetDateTime completionTime;
+
         private List<StepState> steps;
+
+        private List<TaskRunStatusCondition> conditions;
+
+        private List<TaskRunStatus> retriesStatus;
+
+        private List<V1Beta1TektonTaskRunResult<?>> results;
+
+        private List<V1Beta1TektonSidecarState> sidecars;
+
+        private V1Beta1TektonTaskRunSpec.TaskSpec taskSpec;
+
 
 
 

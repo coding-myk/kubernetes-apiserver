@@ -53,19 +53,6 @@ public class K8sApiTestController {
         CoreV1Api coreV1Api = new CoreV1Api(apiClient);
 
 
-        V1Beta1TektonTaskRun.TaskRunStatus taskRunStatus = V1Beta1TektonTaskRun.TaskRunStatus.builder()
-                .podName("dsdaddad")
-                .steps(new ArrayList<>() {{
-                    add(V1Beta1TektonTaskRun.TaskRunStatus.StepState.builder()
-                            .terminated(new V1ContainerStateTerminated()
-                                    .exitCode(0).containerID("dsdadad"))
-                            .build());
-                }})
-                .build();
-
-
-        System.out.println(yamlObjectMapper.writeValueAsString(taskRunStatus));
-
         //创建个PVC
 //        createPvc(coreV1Api,"tekton-pvc-test");
         //创建task
@@ -74,7 +61,7 @@ public class K8sApiTestController {
 //        createTektonTaskRun();
 
 //        createGitCloneTask();
-//        createGitCloneTaskRun();
+        createGitCloneTaskRun();
 
 
         return yamlObjectMapper.writeValueAsString("hello");
@@ -104,6 +91,8 @@ public class K8sApiTestController {
         CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_TASK_RUN.getGroup() ,EnumCustomResource.TEKTON_TASK_RUN.getVersion(),
                 "test", EnumCustomResource.TEKTON_TASK_RUN.getPlural(),taskRun,null,null,null);
+
+        System.out.println(yamlObjectMapper.writeValueAsString(result));
 
     }
 
@@ -136,7 +125,19 @@ public class K8sApiTestController {
                                 .type("string")
                                 .defaultValue("https://github.com/coding-myk/kubernetes-apiserver.git")
                                 .build());}})
+
+                        .sidecars(new ArrayList<>() {{
+                            add(V1Beta1TektonSidecar.builder()
+                                    .image("docker.io/library/busybox:latest")
+                                    .name("sidecar-busy")
+                                    .script("""
+                                            #!/bin/bash
+                                            echo hello world
+                                            """)
+                                    .build());
+                        }})
                         .build())
+
                 .build();
 
 
