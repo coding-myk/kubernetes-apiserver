@@ -1,7 +1,6 @@
 package com.coding.apiserver.custom.resource.definition;
 
 import io.kubernetes.client.openapi.models.*;
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class V1Beta1TektonStepTemplate {
+public class V1Beta1TektonSidecar {
+
+    private String name;
 
     private String image;
 
@@ -22,6 +23,8 @@ public class V1Beta1TektonStepTemplate {
     private List<String> args;
 
     private String workingDir;
+
+    private List<V1ContainerPort> ports;
 
     private List<V1EnvFromSource> envFrom;
 
@@ -33,7 +36,29 @@ public class V1Beta1TektonStepTemplate {
 
     private List<V1VolumeDevice> volumeDevices;
 
+    private V1Probe livenessProbe;
+
+    private V1Probe readinessProbe;
+
+    private V1Probe startupProbe;
+
+    private V1Lifecycle lifecycle;
+
+    private String terminationMessagePath;
+
+    private String terminationMessagePolicy;
+
     private String imagePullPolicy;
 
     private V1SecurityContext securityContext;
+
+    private boolean stdin;
+
+    private boolean stdinOnce;
+
+    private boolean tty;
+
+    private String script;
+
+    private List<V1Beta1TektonWorkspaceUsage> workspaces;
 }

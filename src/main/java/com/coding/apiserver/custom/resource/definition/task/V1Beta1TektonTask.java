@@ -1,4 +1,4 @@
-package com.coding.apiserver.custom.resource.definition;
+package com.coding.apiserver.custom.resource.definition.task;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.swagger.annotations.ApiModel;
@@ -13,12 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ApiModel(
-        description =
-                "Tekton 实体类")
-@javax.annotation.Generated(
-        value = "org.openapitools.codegen.languages.JavaClientCodegen",
-        date = "2022-08-30T16:45:00.555Z[Etc/UTC]")
 public class V1Beta1TektonTask implements io.kubernetes.client.common.KubernetesObject{
 
     private String apiVersion;

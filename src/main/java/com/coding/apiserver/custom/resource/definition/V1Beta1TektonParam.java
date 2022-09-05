@@ -4,19 +4,17 @@ package com.coding.apiserver.custom.resource.definition;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Map;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Data
-@ApiModel(description = "TektonTaskSpec params item")
-@javax.annotation.Generated(
-        value = "org.openapitools.codegen.languages.JavaClientCodegen",
-        date = "2022-08-30T16:45:00.555Z[Etc/UTC]")
-public class V1Beta1TektonTaskParam<T> {
+public class V1Beta1TektonParam<T> {
 
 
 

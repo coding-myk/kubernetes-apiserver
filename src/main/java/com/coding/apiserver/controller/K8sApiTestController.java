@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.coding.apiserver.custom.resource.definition.*;
+import com.coding.apiserver.custom.resource.definition.task.*;
 import com.coding.apiserver.models.enums.EnumCustomResource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +52,20 @@ public class K8sApiTestController {
         //查询Pod
         CoreV1Api coreV1Api = new CoreV1Api(apiClient);
 
+
+        V1Beta1TektonTaskRun.TaskRunStatus taskRunStatus = V1Beta1TektonTaskRun.TaskRunStatus.builder()
+                .podName("dsdaddad")
+                .steps(new ArrayList<>() {{
+                    add(V1Beta1TektonTaskRun.TaskRunStatus.StepState.builder()
+                            .terminated(new V1ContainerStateTerminated()
+                                    .exitCode(0).containerID("dsdadad"))
+                            .build());
+                }})
+                .build();
+
+
+        System.out.println(yamlObjectMapper.writeValueAsString(taskRunStatus));
+
         //创建个PVC
 //        createPvc(coreV1Api,"tekton-pvc-test");
         //创建task
@@ -58,8 +73,8 @@ public class K8sApiTestController {
 //        //创建task run
 //        createTektonTaskRun();
 
-        createGitCloneTask();
-        createGitCloneTaskRun();
+//        createGitCloneTask();
+//        createGitCloneTaskRun();
 
 
         return yamlObjectMapper.writeValueAsString("hello");
@@ -74,12 +89,12 @@ public class K8sApiTestController {
                 .metadata(new V1ObjectMeta().name("git-clone-test"))
                 .spec(V1Beta1TektonTaskRunSpec.builder()
                         .taskRef(V1Beta1TektonTaskRunSpec.TaskRef.builder().name("git-clone").build())
-                        .params(new ArrayList<>(){{add(V1Beta1TektonTaskRunParam.builder()
+                        .params(new ArrayList<>(){{add(V1Beta1TektonRunParam.builder()
                                 .name("url")
                                 .value("https://github.com/coding-myk/kubernetes-apiserver.git")
                                 .build());}})
-                        .workspaces(new ArrayList<>() {{add(V1Beta1TektonTaskRunOrPipelineRunWorkspace.builder()
-                                .persistentVolumeClaim(V1Beta1TektonTaskRunOrPipelineRunWorkspace.PersistentVolumeClaim.builder().claimName("tekton-pvc-test").build())
+                        .workspaces(new ArrayList<>() {{add(V1Beta1TektonWorkspaceBinding.builder()
+                                .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder().claimName("tekton-pvc-test").build())
                                 .name("coding")
                                 .build()); }})
                         .build())
@@ -111,12 +126,12 @@ public class K8sApiTestController {
                                     .workingDir("/coding/repository")
                                     .build());
                         }})
-                        .workspaces(new ArrayList<>() {{add(V1Beta1TektonTaskWorkspace.builder()
+                        .workspaces(new ArrayList<>() {{add(V1Beta1TektonWorkSpaceDeclaration.builder()
                                 .name("coding")
                                 .description("代码存放目录")
                                 .mountPath("/coding")
                                 .build());}})
-                        .params(new ArrayList<>() {{add(V1Beta1TektonTaskParam.builder()
+                        .params(new ArrayList<>() {{add(V1Beta1TektonParam.builder()
                                 .name("url")
                                 .type("string")
                                 .defaultValue("https://github.com/coding-myk/kubernetes-apiserver.git")
@@ -152,7 +167,7 @@ public class K8sApiTestController {
                                     .build());
                         }})
                         .workspaces(new ArrayList<>() {{
-                            add(V1Beta1TektonTaskWorkspace.builder()
+                            add(V1Beta1TektonWorkSpaceDeclaration.builder()
                                     .description("测试pvc workspace")
                                     .name("workspacepvctest")
                                     .mountPath("/data")
@@ -180,14 +195,14 @@ public class K8sApiTestController {
                         .taskRef(V1Beta1TektonTaskRunSpec.TaskRef.builder()
                                 .name("pvctest")
                                 .build())
-                        .workspaces(Collections.singletonList(V1Beta1TektonTaskRunOrPipelineRunWorkspace.builder()
+                        .workspaces(Collections.singletonList(V1Beta1TektonWorkspaceBinding.builder()
 //                                .volumeClaimTemplate(V1Beta1TektonTaskRunOrPipelineRunWorkspace.VolumeClaimTemplate.builder()
 //                                        .spec(new V1PersistentVolumeClaimSpec()
 //                                                .storageClassName("nfs-client")
 //                                                .accessModes(new ArrayList<>(){{add("ReadWriteOnce");}})
 //                                                .resources(new V1ResourceRequirements().requests(new HashMap<>() {{put("storage",new Quantity("1Gi"));}})))
 //                                        .build())
-                                .persistentVolumeClaim(V1Beta1TektonTaskRunOrPipelineRunWorkspace.PersistentVolumeClaim.builder()
+                                .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder()
                                         .claimName("tekton-pvc-test").build())
                                 .name("workspacepvctest")
                                 .build()))
@@ -264,6 +279,5 @@ public class K8sApiTestController {
     }
 
 
-    
 
 }
