@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.coding.apiserver.custom.resource.definition.*;
+import com.coding.apiserver.custom.resource.definition.pipeline.*;
 import com.coding.apiserver.custom.resource.definition.task.*;
 import com.coding.apiserver.models.enums.EnumCustomResource;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -68,6 +69,36 @@ public class K8sApiTestController {
 
     }
 
+    public void createBuildPackagePipeline() {
+
+        V1Beta1TektonPipeline pipeline = V1Beta1TektonPipeline.builder()
+                .apiVersion("tekton.dev/v1beta1")
+                .kind("Pipeline")
+                .metadata(new V1ObjectMeta().name("test-pipeline"))
+                .spec(V1Beta1TektonPipelineSpec.builder()
+                        .workspaces(new ArrayList<>() {{
+                            add(V1Beta1TektonPipelineWorkspaceDeclaration.builder()
+                                    .name("coding")
+                                    .build());
+
+                        }})
+                        .tasks(new ArrayList<>() {{
+                            add(V1Beta1TektonPipelineTask.builder()
+                                    .name("git-clone-test")
+                                    .taskRef(V1Beta1TektonPipelineTaskRef.builder().name("git-clone-test").build())
+                                    .workspaces(new ArrayList<>() {{
+                                        add(V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding.builder()
+                                                .name("code-repository")
+                                                .workspace("coding")
+                                                .build());
+                                    }})
+                                    .build());
+                        }})
+                        .build())
+                .build();
+
+    }
+
 
     public void createGitCloneTaskRun() throws JsonProcessingException, ApiException {
         V1Beta1TektonTaskRun taskRun = V1Beta1TektonTaskRun.builder()
@@ -75,7 +106,7 @@ public class K8sApiTestController {
                 .kind("TaskRun")
                 .metadata(new V1ObjectMeta().name("git-clone-test"))
                 .spec(V1Beta1TektonTaskRunSpec.builder()
-                        .taskRef(V1Beta1TektonTaskRunSpec.TaskRef.builder().name("git-clone").build())
+                        .taskRef(V1Beta1TektonPipelineTaskRef.builder().name("git-clone").build())
                         .params(new ArrayList<>(){{add(V1Beta1TektonRunParam.builder()
                                 .name("url")
                                 .value("https://github.com/coding-myk/kubernetes-apiserver.git")
@@ -193,7 +224,7 @@ public class K8sApiTestController {
                 .kind("TaskRun")
                 .metadata(new V1ObjectMeta().name("pvctesttaskrun"))
                 .spec(V1Beta1TektonTaskRunSpec.builder()
-                        .taskRef(V1Beta1TektonTaskRunSpec.TaskRef.builder()
+                        .taskRef(V1Beta1TektonPipelineTaskRef.builder()
                                 .name("pvctest")
                                 .build())
                         .workspaces(Collections.singletonList(V1Beta1TektonWorkspaceBinding.builder()

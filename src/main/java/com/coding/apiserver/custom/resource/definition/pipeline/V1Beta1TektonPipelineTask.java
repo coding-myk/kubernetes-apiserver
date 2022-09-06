@@ -2,7 +2,6 @@ package com.coding.apiserver.custom.resource.definition.pipeline;
 
 import com.coding.apiserver.custom.resource.definition.*;
 import com.coding.apiserver.custom.resource.definition.task.V1Beta1TektonTaskResult;
-import com.coding.apiserver.custom.resource.definition.task.V1Beta1TektonTaskRunSpec;
 import io.kubernetes.client.openapi.models.V1Volume;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +18,7 @@ public class V1Beta1TektonPipelineTask {
 
     private String name;
 
-    private V1Beta1TektonTaskRunSpec.TaskRef taskRef;
+    private V1Beta1TektonPipelineTaskRef taskRef;
 
     private EmbeddedTask taskSpec;
 
