@@ -2,7 +2,6 @@ package com.coding.apiserver.custom.resource.definition.pipeline;
 
 import com.coding.apiserver.custom.resource.definition.*;
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +21,7 @@ public class V1Beta1TektonPipelineRunSpec {
 
     private PipelineSpec pipelineSpec;
 
-    private List<V1Beta1TektonRunParam> params;
+    private List<V1Beta1TektonRunParam<?>> params;
 
     private String serviceAccount;
 
@@ -30,7 +29,11 @@ public class V1Beta1TektonPipelineRunSpec {
 
     private Timeouts timeouts;
 
+    private V1Beta1TektonPodTemplate podTemplate;
+
     private List<V1Beta1TektonWorkspaceBinding> workspaces;
+
+    private List<V1Beta1TektonPipelineTaskRunSpec> taskRunSpecs;
 
 
     @Builder
@@ -43,13 +46,13 @@ public class V1Beta1TektonPipelineRunSpec {
 
         private OffsetDateTime completionTime;
 
-        private List<V1Beta1TektonPipelineResult> results;
+        private List<V1Beta1TektonPipelineRunResult<?>> results;
 
         private List<PipelineSpec> pipelineSpec;
 
-        private List<V1Beta1TektonParam> params;
-
         private List<SkippedTask> skippedTasks;
+
+        private List<ChildStatusReference> childStatusReferences;
 
         private OffsetDateTime finallyStartTime;
 
@@ -66,7 +69,7 @@ public class V1Beta1TektonPipelineRunSpec {
 
             private String reason;
 
-            private List<V1Beta1TektonWhen> whenExpressions;
+            private List<V1Beta1TektonWhenExpressions<?>> whenExpressions;
 
         }
 
@@ -80,7 +83,7 @@ public class V1Beta1TektonPipelineRunSpec {
 
             private String pipelineTaskName;
 
-            private List<V1Beta1TektonWhen> whenExpressions;
+            private List<V1Beta1TektonWhenExpressions<?>> whenExpressions;
         }
     }
 
@@ -111,7 +114,7 @@ public class V1Beta1TektonPipelineRunSpec {
 
         private String apiVersion;
 
-        private ResolverRef resolverRef;
+        private V1Beta1TektonResolverRef v1Beta1TektonResolverRef;
 
     }
 
@@ -126,11 +129,11 @@ public class V1Beta1TektonPipelineRunSpec {
 
         private List<V1Beta1TektonPipelineTask> pipelineTask;
 
-        private List<V1Beta1TektonParam> params;
+        private List<V1Beta1TektonParam<?>> params;
 
-        private List<V1Beta1TektonPipelineWorkspace> workspaces;
+        private List<V1Beta1TektonPipelineWorkspaceDeclaration> workspaces;
 
-        private List<V1Beta1TektonPipelineResult> results;
+        private List<V1Beta1TektonPipelineResult<?>> results;
 
         @SerializedName("finally")
         private List<V1Beta1TektonPipelineTask> finallyTask;

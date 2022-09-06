@@ -1,7 +1,6 @@
 package com.coding.apiserver.custom.resource.definition;
 
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class V1Beta1TektonWhen<T> {
+public class V1Beta1TektonWhenExpressions<T> {
+
+
 
 
     @ApiModelProperty(value = "input", notes = "input is the input for the expression which can be static inputs or variables (Parameters or Results). If the is not provided, it defaults to an empty string")

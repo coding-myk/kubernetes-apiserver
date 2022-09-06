@@ -1,6 +1,5 @@
 package com.coding.apiserver.custom.resource.definition.pipeline;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class V1Beta1TektonPipelineWorkspace {
+public class V1Beta1TektonPipelineWorkspaceDeclaration {
 
 
     private String name;

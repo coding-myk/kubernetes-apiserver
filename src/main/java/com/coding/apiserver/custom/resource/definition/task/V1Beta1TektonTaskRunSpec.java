@@ -91,7 +91,7 @@ public class V1Beta1TektonTaskRunSpec {
 
         private String apiVersion;
 
-        private ResolverRef resolverRef;
+        private V1Beta1TektonResolverRef v1Beta1TektonResolverRef;
 
     }
 }

@@ -10,11 +10,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ResolverRef {
+public class V1Beta1TektonResolverRef {
 
     private String resolverName;
 
-    private List<V1Beta1TektonRunParam> params;
+    private List<V1Beta1TektonRunParam<?>> params;
 
 
 }

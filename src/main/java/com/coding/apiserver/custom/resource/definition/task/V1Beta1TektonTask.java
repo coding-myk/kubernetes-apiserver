@@ -1,7 +1,6 @@
 package com.coding.apiserver.custom.resource.definition.task;
 
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,8 +1,9 @@
 package com.coding.apiserver.custom.resource.definition.pipeline;
 
-import com.coding.apiserver.custom.resource.definition.V1Beta1TektonParam;
-import com.coding.apiserver.custom.resource.definition.V1Beta1TektonWhen;
+import com.coding.apiserver.custom.resource.definition.*;
+import com.coding.apiserver.custom.resource.definition.task.V1Beta1TektonTaskResult;
 import com.coding.apiserver.custom.resource.definition.task.V1Beta1TektonTaskRunSpec;
+import io.kubernetes.client.openapi.models.V1Volume;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,30 +16,57 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ApiModel(description = "Tekton 实体类")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-08-30T16:45:00.555Z[Etc/UTC]")
 public class V1Beta1TektonPipelineTask {
 
     private String name;
 
-    private V1Beta1TektonWhen when;
-
     private V1Beta1TektonTaskRunSpec.TaskRef taskRef;
 
-    private V1Beta1TektonTaskRunSpec.TaskSpec taskSpec;
+    private EmbeddedTask taskSpec;
 
-    private List<String> runAfter;
+    private V1Beta1TektonWhenExpressions<?> when;
 
     private Integer retries;
 
-    private String timeout;
+    private List<String> runAfter;
 
-    private List<V1Beta1TektonParam> params;
+    private List<V1Beta1TektonRunParam<?>> params;
 
-    private List<V1Beta1TektonParam> matrix;
+    private List<V1Beta1TektonRunParam<?>> matrix;
 
     private List<V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding> workspaces;
 
+    private String timeout;
+
+
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    public static class EmbeddedTask {
+
+        private Object spec;
+
+        private V1Beta1TektonPipelineTaskMetadata metadata;
+
+        private List<V1Beta1TektonParam<?>> params;
+
+        private String description;
+
+        private List<V1Beta1TektonStep> steps;
+
+        private List<V1Volume> volumes;
+
+        private V1Beta1TektonStepTemplate stepTemplate;
+
+        private List<V1Beta1TektonSidecar> sidecars;
+
+        private List<V1Beta1TektonWorkSpaceDeclaration> workspaces;
+
+        private List<V1Beta1TektonTaskResult> results;
+
+    }
 
 
 

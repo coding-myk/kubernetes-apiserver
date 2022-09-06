@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +23,8 @@ public class V1Beta1TektonPipelineRun {
     private V1ObjectMeta metadata;
 
     private V1Beta1TektonPipelineRunSpec spec;
+
+    private V1Beta1TektonPipelineRunSpec.PipelineRunStatus status;
+
 
 }
