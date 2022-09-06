@@ -25,7 +25,7 @@ public class V1Beta1TektonPipelineRunSpec {
 
     private String serviceAccount;
 
-    private PipelineRunStatus status;
+    private V1Beta1TektonPipelineRunStatus status;
 
     private Timeouts timeouts;
 
@@ -36,56 +36,6 @@ public class V1Beta1TektonPipelineRunSpec {
     private List<V1Beta1TektonPipelineTaskRunSpec> taskRunSpecs;
 
 
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class PipelineRunStatus {
-
-        private OffsetDateTime startTime;
-
-        private OffsetDateTime completionTime;
-
-        private List<V1Beta1TektonPipelineRunResult<?>> results;
-
-        private List<PipelineSpec> pipelineSpec;
-
-        private List<SkippedTask> skippedTasks;
-
-        private List<ChildStatusReference> childStatusReferences;
-
-        private OffsetDateTime finallyStartTime;
-
-
-
-
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @Data
-        public static class SkippedTask {
-
-            private String name;
-
-            private String reason;
-
-            private List<V1Beta1TektonWhenExpressions<?>> whenExpressions;
-
-        }
-
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @Data
-        public static class ChildStatusReference {
-
-            private String name;
-
-            private String pipelineTaskName;
-
-            private List<V1Beta1TektonWhenExpressions<?>> whenExpressions;
-        }
-    }
 
     @Builder
     @NoArgsConstructor

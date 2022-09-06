@@ -12,28 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class V1Beta1TektonTask implements io.kubernetes.client.common.KubernetesObject{
+public class V1Beta1TektonTask{
 
     private String apiVersion;
+
     private String kind;
+
     private V1ObjectMeta metadata;
 
     private V1Beta1TektonTaskSpec spec;
 
-
-
-    @Override
-    public V1ObjectMeta getMetadata() {
-        return metadata;
-    }
-
-    @Override
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    @Override
-    public String getKind() {
-        return kind;
-    }
 }

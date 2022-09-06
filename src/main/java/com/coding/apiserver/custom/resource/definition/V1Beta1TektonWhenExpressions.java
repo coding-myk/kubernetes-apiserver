@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 public class V1Beta1TektonWhenExpressions<T> {
 
 
-
-
     @ApiModelProperty(value = "input", notes = "input is the input for the expression which can be static inputs or variables (Parameters or Results). If the is not provided, it defaults to an empty string")
     private String input;
 

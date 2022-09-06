@@ -1,7 +1,6 @@
 package com.coding.apiserver.custom.resource.definition.pipeline;
 
-
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import com.coding.apiserver.custom.resource.definition.V1Beta1TektonResolverRef;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,16 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class V1Beta1TektonPipelineRun {
+public class V1Beta1TektonPipelineTaskRef {
 
-    private String apiVersion;
+    private String name;
 
     private String kind;
 
-    private V1ObjectMeta metadata;
+    private String apiVersion;
 
-    private V1Beta1TektonPipelineRunSpec spec;
-
-    private V1Beta1TektonPipelineRunStatus status;
+    private V1Beta1TektonResolverRef v1Beta1TektonResolverRef;
 
 }

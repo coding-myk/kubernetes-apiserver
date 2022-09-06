@@ -15,8 +15,6 @@ import java.util.List;
 @Data
 public class V1Beta1TektonTaskSpec {
 
-
-
     private List<V1Beta1TektonParam<?>> params;
 
     private String description;

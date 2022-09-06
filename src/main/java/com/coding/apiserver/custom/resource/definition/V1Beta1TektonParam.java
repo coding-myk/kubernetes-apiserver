@@ -2,7 +2,6 @@ package com.coding.apiserver.custom.resource.definition;
 
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -16,7 +16,6 @@ import java.util.Map;
 @Data
 public class V1Beta1TektonPodTemplate {
 
-
     private Map<String, String> nodeSelector;
 
     private List<V1Toleration> tolerations;

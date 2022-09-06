@@ -4,7 +4,6 @@ import com.coding.apiserver.custom.resource.definition.*;
 import com.coding.apiserver.custom.resource.definition.task.V1Beta1TektonTaskResult;
 import com.coding.apiserver.custom.resource.definition.task.V1Beta1TektonTaskRunSpec;
 import io.kubernetes.client.openapi.models.V1Volume;
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +33,7 @@ public class V1Beta1TektonPipelineTask {
 
     private List<V1Beta1TektonRunParam<?>> matrix;
 
-    private List<V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding> workspaces;
+    private List<WorkspacePipelineTaskBinding> workspaces;
 
     private String timeout;
 

@@ -19,7 +19,7 @@ public class V1Beta1TektonPipelineSpec {
 
     private String description;
 
-    private V1Beta1TektonTaskRunSpec.TaskRef taskRef;
+    private V1Beta1TektonPipelineTaskRef taskRef;
 
     private List<V1Beta1TektonPipelineTask> tasks;
 

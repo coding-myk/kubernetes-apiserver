@@ -2,6 +2,7 @@ package com.coding.apiserver.custom.resource.definition.task;
 
 
 import com.coding.apiserver.custom.resource.definition.*;
+import com.coding.apiserver.custom.resource.definition.pipeline.V1Beta1TektonPipelineTaskRef;
 import io.kubernetes.client.openapi.models.V1ResourceRequirements;
 import io.kubernetes.client.openapi.models.V1Volume;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class V1Beta1TektonTaskRunSpec {
 
     private String serviceAccountName;
 
-    private TaskRef taskRef;
+    private V1Beta1TektonPipelineTaskRef taskRef;
 
     private TaskSpec taskSpec;
 
@@ -79,19 +80,4 @@ public class V1Beta1TektonTaskRunSpec {
         private List<V1Beta1TektonTaskResult> results;
     }
 
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class TaskRef {
-
-        private String name;
-
-        private String kind;
-
-        private String apiVersion;
-
-        private V1Beta1TektonResolverRef v1Beta1TektonResolverRef;
-
-    }
 }
