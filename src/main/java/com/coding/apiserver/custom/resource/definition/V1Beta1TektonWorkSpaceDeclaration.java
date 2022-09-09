@@ -16,9 +16,9 @@ public class V1Beta1TektonWorkSpaceDeclaration {
 
     private String description;
 
-    private boolean readOnly;
+    private Boolean readOnly;
 
-    private boolean optional;
+    private Boolean optional;
 
     private String mountPath;
 

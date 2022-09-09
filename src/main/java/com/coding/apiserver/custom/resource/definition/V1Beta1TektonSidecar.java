@@ -52,11 +52,11 @@ public class V1Beta1TektonSidecar {
 
     private V1SecurityContext securityContext;
 
-    private boolean stdin;
+    private Boolean stdin;
 
-    private boolean stdinOnce;
+    private Boolean stdinOnce;
 
-    private boolean tty;
+    private Boolean tty;
 
     private String script;
 

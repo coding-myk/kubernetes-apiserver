@@ -28,7 +28,7 @@ public class V1Beta1TektonPipelineTask {
 
     private List<String> runAfter;
 
-    private List<V1Beta1TektonRunParam<?>> params;
+    private List<V1Beta1TektonRunParam> params;
 
     private List<V1Beta1TektonRunParam<?>> matrix;
 

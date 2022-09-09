@@ -16,6 +16,6 @@ public class V1Beta1TektonPipelineWorkspaceDeclaration {
 
     private String description;
 
-    private boolean optional;
+    private Boolean optional;
 
 }

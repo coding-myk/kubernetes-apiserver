@@ -11,10 +11,20 @@ import com.coding.apiserver.custom.resource.definition.task.*;
 import com.coding.apiserver.models.enums.EnumCustomResource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
+import com.google.protobuf.Type;
+import com.google.protobuf.TypeOrBuilder;
+import io.gsonfire.GsonFireBuilder;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.custom.Quantity;
+import io.kubernetes.client.gson.V1StatusPreProcessor;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.JSON;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.*;
@@ -24,9 +34,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.*;
 
 @RestController
 public class K8sApiTestController {
@@ -46,6 +60,57 @@ public class K8sApiTestController {
     private ObjectMapper yamlObjectMapper;
 
 
+    private static String mavensetting = """
+            <?xml version="1.0" encoding="UTF-8"?>
+                        
+                        
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+                        
+              <localRepository>/coding/maven/repository</localRepository>
+                        
+              <pluginGroups>
+                        
+              </pluginGroups>
+                        
+                        
+              <proxies>
+                        
+              </proxies>
+                        
+                        
+              <servers>
+                        
+              </servers>
+                        
+                        
+              <mirrors>
+                        
+                <mirror>
+                  <id>central</id>
+                  <mirrorOf>central repository</mirrorOf>
+                  <name>Pseudo repository to mirror external repositories initially using HTTP.</name>
+                  <url>https://repo.maven.apache.org/maven2</url>
+                </mirror>
+                        
+              </mirrors>
+                        
+              <profiles>
+                        
+              </profiles>
+                        
+              <!-- activeProfiles
+               | List of profiles that are active for all builds.
+               |
+              <activeProfiles>
+                <activeProfile>alwaysActiveProfile</activeProfile>
+                <activeProfile>anotherAlwaysActiveProfile</activeProfile>
+              </activeProfiles>
+              -->
+            </settings>  
+            """;
+
 
     @GetMapping("/test")
     public String test() throws ApiException, IOException {
@@ -62,14 +127,57 @@ public class K8sApiTestController {
 //        createTektonTaskRun();
 
 //        createGitCloneTask();
-        createGitCloneTaskRun();
+//        createGitCloneTaskRun();
+//
+//        //创建maven settings
+//        createMavenSettingConfigMap(apiClient);
+
+        createBuildPackagePipeline(apiClient);
+
+//        createBuildPackagePipelineRun(apiClient);
+
+
 
 
         return yamlObjectMapper.writeValueAsString("hello");
 
     }
 
-    public void createBuildPackagePipeline() {
+    public void createBuildPackagePipelineRun (ApiClient apiClient) throws JsonProcessingException, ApiException {
+
+        V1Beta1TektonPipelineRun pipelineRun = V1Beta1TektonPipelineRun.builder()
+                .apiVersion("tekton.dev/v1beta1")
+                .kind("PipelineRuns")
+                .metadata(new V1ObjectMeta().name("devops"))
+                .spec(V1Beta1TektonPipelineRunSpec.builder()
+                        .pipelineRef(V1Beta1TektonPipelineRunSpec.PipelineRef.builder().name("test-pipeline").build())
+                        .workspaces(new ArrayList<>() {{
+
+                            add(V1Beta1TektonWorkspaceBinding.builder()
+                                    .name("maven-settings")
+                                    .configMap(new V1ConfigMapVolumeSource().name("configmap-maven-settings"))
+                                    .build());
+                            add(V1Beta1TektonWorkspaceBinding.builder()
+                                    .name("code-repository")
+                                    .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder()
+                                            .claimName("test-tekton-pvc")
+                                            .build())
+                                    .build());
+
+                        }})
+                        .build())
+
+                .build();
+
+        CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+        Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_PIPELINE_RUN.getGroup() ,EnumCustomResource.TEKTON_PIPELINE_RUN.getVersion(),
+                "test", EnumCustomResource.TEKTON_PIPELINE_RUN.getPlural(),pipelineRun,null,null,null);
+        System.out.println(yamlObjectMapper.writeValueAsString(result));
+    }
+
+    public void createBuildPackagePipeline(ApiClient apiClient) throws ApiException, JsonProcessingException {
+
+
 
         V1Beta1TektonPipeline pipeline = V1Beta1TektonPipeline.builder()
                 .apiVersion("tekton.dev/v1beta1")
@@ -78,7 +186,10 @@ public class K8sApiTestController {
                 .spec(V1Beta1TektonPipelineSpec.builder()
                         .workspaces(new ArrayList<>() {{
                             add(V1Beta1TektonPipelineWorkspaceDeclaration.builder()
-                                    .name("coding")
+                                    .name("maven-settings")
+                                    .build());
+                            add(V1Beta1TektonPipelineWorkspaceDeclaration.builder()
+                                    .name("code-repository")
                                     .build());
 
                         }})
@@ -89,13 +200,64 @@ public class K8sApiTestController {
                                     .workspaces(new ArrayList<>() {{
                                         add(V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding.builder()
                                                 .name("code-repository")
-                                                .workspace("coding")
+                                                .workspace("code-repository")
                                                 .build());
                                     }})
+                                    .build());
+                            add(V1Beta1TektonPipelineTask.builder()
+                                    .name("maven-package")
+                                    .taskRef(V1Beta1TektonPipelineTaskRef.builder()
+                                            .name("maven")
+                                            .build())
+                                    .params(new ArrayList<V1Beta1TektonRunParam>() {{
+                                        add(V1Beta1TektonRunParam.builder()
+                                                .name("CONTENT_DIR")
+                                                .value("/coding/repository/kubernetes-apiserver")
+                                                .build());
+                                        add(V1Beta1TektonRunParam.builder()
+                                                .name("GOALS")
+                                                .value(new ArrayList<>() {{
+                                                    add("-DskipTests");
+                                                    add("clean");
+                                                    add("package");
+                                                }})
+                                                .build());
+                                    }})
+                                    .workspaces(new ArrayList<>() {{
+                                        add(V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding.builder()
+                                                .name("maven-settings")
+                                                .workspace("maven-settings")
+                                                .build());
+                                    }})
+
                                     .build());
                         }})
                         .build())
                 .build();
+
+
+
+        System.out.println(yamlObjectMapper.writeValueAsString(pipeline));
+        System.out.println(new JSON().serialize(pipeline));
+        CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+        Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_PIPELINE.getGroup() ,EnumCustomResource.TEKTON_PIPELINE.getVersion(),
+                "test", EnumCustomResource.TEKTON_PIPELINE.getPlural(),pipeline,null,null,null);
+        System.out.println(yamlObjectMapper.writeValueAsString(result));
+    }
+
+    public void createMavenSettingConfigMap(ApiClient apiClient) throws ApiException {
+
+        CoreV1Api coreV1Api = new CoreV1Api(apiClient);
+
+        V1ConfigMap configMap = new V1ConfigMap();
+        configMap.setApiVersion("v1");
+        configMap.setKind("ConfigMap");
+        configMap.setMetadata(new V1ObjectMeta().name("configmap-maven-settings"));
+        configMap.setBinaryData(new HashMap<>() {{
+            put("settings.xml",mavensetting.getBytes(StandardCharsets.UTF_8));
+        }});
+        
+        coreV1Api.createNamespacedConfigMap("test",configMap, null,null,null,null);
 
     }
 
@@ -132,7 +294,7 @@ public class K8sApiTestController {
         V1Beta1TektonTask task = V1Beta1TektonTask.builder()
                 .apiVersion("tekton.dev/v1beta1")
                 .kind("Task")
-                .metadata(new V1ObjectMeta().name("git-clone"))
+                .metadata(new V1ObjectMeta().name("git-clone-test"))
                 .spec(V1Beta1TektonTaskSpec.builder()
                         .steps(new ArrayList<>() {{
                             add(V1Beta1TektonStep.builder()
@@ -147,26 +309,15 @@ public class K8sApiTestController {
                                     .build());
                         }})
                         .workspaces(new ArrayList<>() {{add(V1Beta1TektonWorkSpaceDeclaration.builder()
-                                .name("coding")
+                                .name("code-repository")
                                 .description("代码存放目录")
                                 .mountPath("/coding")
                                 .build());}})
-                        .params(new ArrayList<>() {{add(V1Beta1TektonParam.builder()
+                        .params(new ArrayList<>() {{add(V1Beta1TektonParam.<String>builder()
                                 .name("url")
                                 .type("string")
                                 .defaultValue("https://github.com/coding-myk/kubernetes-apiserver.git")
                                 .build());}})
-
-                        .sidecars(new ArrayList<>() {{
-                            add(V1Beta1TektonSidecar.builder()
-                                    .image("docker.io/library/busybox:latest")
-                                    .name("sidecar-busy")
-                                    .script("""
-                                            #!/bin/bash
-                                            echo hello world
-                                            """)
-                                    .build());
-                        }})
                         .build())
 
                 .build();
@@ -177,6 +328,8 @@ public class K8sApiTestController {
         CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_TASK.getGroup() ,EnumCustomResource.TEKTON_TASK.getVersion(),
                 "test", EnumCustomResource.TEKTON_TASK.getPlural(),task,null,null,null);
+
+        System.out.println(yamlObjectMapper.writeValueAsString(result));
     }
 
 
@@ -191,10 +344,10 @@ public class K8sApiTestController {
                         .steps(new ArrayList<>() {{
                             add(V1Beta1TektonStep.builder()
                                     .name("pvcstep")
-                                    .image("bitnami/centos-base-buildpack:latest")
+                                    .image("docker.io/centos:latest")
                                     .script("""
                                             #!/bin/bash
-                                            echo "hello world" > /data/test.txt
+                                            echo $(workspaces.workspacepvctest.path) > /data/test.txt
                                             """)
                                     .build());
                         }})
@@ -208,10 +361,11 @@ public class K8sApiTestController {
                         .build())
                 .build();
 
-        System.out.println(yamlObjectMapper.writeValueAsString(task1));
         CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_TASK.getGroup() ,EnumCustomResource.TEKTON_TASK.getVersion(),
                 "test", EnumCustomResource.TEKTON_TASK.getPlural(),task1,null,null,null);
+
+        System.out.println(yamlObjectMapper.writeValueAsString(result));
 
     }
 
@@ -241,10 +395,11 @@ public class K8sApiTestController {
                         .build())
                 .build();
 
-        System.out.println(yamlObjectMapper.writeValueAsString(taskRun));
+
         CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
-        customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_TASK_RUN.getGroup(), EnumCustomResource.TEKTON_TASK_RUN.getVersion(),
+        Object obj = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_TASK_RUN.getGroup(), EnumCustomResource.TEKTON_TASK_RUN.getVersion(),
                 "test", EnumCustomResource.TEKTON_TASK_RUN.getPlural(),taskRun,null,null,null);
+        System.out.println(yamlObjectMapper.writeValueAsString(obj));
     }
 
     public void getPod(CoreV1Api coreV1Api) throws ApiException {
