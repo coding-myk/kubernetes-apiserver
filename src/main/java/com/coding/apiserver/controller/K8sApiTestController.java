@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -41,6 +43,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.*;
+import java.util.stream.Stream;
 
 @RestController
 public class K8sApiTestController {
@@ -62,58 +65,47 @@ public class K8sApiTestController {
 
     private static String mavensetting = """
             <?xml version="1.0" encoding="UTF-8"?>
-                        
-                        
-            <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
-                        
-              <localRepository>/coding/maven/repository</localRepository>
-                        
-              <pluginGroups>
-                        
-              </pluginGroups>
-                        
-                        
-              <proxies>
-                        
-              </proxies>
-                        
-                        
-              <servers>
-                        
-              </servers>
-                        
-                        
-              <mirrors>
-                        
-                <mirror>
-                  <id>central</id>
-                  <mirrorOf>central repository</mirrorOf>
-                  <name>Pseudo repository to mirror external repositories initially using HTTP.</name>
-                  <url>https://repo.maven.apache.org/maven2</url>
-                </mirror>
-                        
-              </mirrors>
-                        
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">  
+              <localRepository>/workspace/source/maven/repository</localRepository>
               <profiles>
-                        
+                <profile>
+                  <id>alimaven</id>
+                  <repositories>
+                    <repository>
+                    <id>central</id>
+                    <url>https://maven.aliyun.com/repository/public</url>
+                    <releases>
+                      <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                      <enabled>true</enabled>
+                    </snapshots>
+                    </repository>
+                  </repositories>
+                  <pluginRepositories>
+                    <pluginRepository>
+                      <id>central</id>
+                      <url>https://maven.aliyun.com/repository/public</url>
+                      <releases>
+                        <enabled>true</enabled>
+                      </releases>
+                      <snapshots>
+                        <enabled>true</enabled>
+                      </snapshots>
+                    </pluginRepository>
+                  </pluginRepositories>
+                </profile>
               </profiles>
-                        
-              <!-- activeProfiles
-               | List of profiles that are active for all builds.
-               |
-              <activeProfiles>
-                <activeProfile>alwaysActiveProfile</activeProfile>
-                <activeProfile>anotherAlwaysActiveProfile</activeProfile>
-              </activeProfiles>
-              -->
-            </settings>  
-            """;
+                <activeProfiles>
+                       <activeProfile>alimaven</activeProfile>
+                </activeProfiles>
+            </settings>""";
 
 
     @GetMapping("/test")
-    public String test() throws ApiException, IOException {
+    public String test() throws ApiException, IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
         //查询Pod
         CoreV1Api coreV1Api = new CoreV1Api(apiClient);
@@ -126,15 +118,15 @@ public class K8sApiTestController {
 //        //创建task run
 //        createTektonTaskRun();
 
-//        createGitCloneTask();
+        createGitCloneTask();
 //        createGitCloneTaskRun();
 //
 //        //创建maven settings
 //        createMavenSettingConfigMap(apiClient);
-
-        createBuildPackagePipeline(apiClient);
-
-//        createBuildPackagePipelineRun(apiClient);
+//
+//        createBuildPackagePipeline(apiClient);
+//
+        createBuildPackagePipelineRun(apiClient);
 
 
 
@@ -158,9 +150,9 @@ public class K8sApiTestController {
                                     .configMap(new V1ConfigMapVolumeSource().name("configmap-maven-settings"))
                                     .build());
                             add(V1Beta1TektonWorkspaceBinding.builder()
-                                    .name("code-repository")
+                                    .name("source")
                                     .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder()
-                                            .claimName("test-tekton-pvc")
+                                            .claimName("tekton-pvc-test")
                                             .build())
                                     .build());
 
@@ -175,9 +167,7 @@ public class K8sApiTestController {
         System.out.println(yamlObjectMapper.writeValueAsString(result));
     }
 
-    public void createBuildPackagePipeline(ApiClient apiClient) throws ApiException, JsonProcessingException {
-
-
+    public void createBuildPackagePipeline(ApiClient apiClient) throws ApiException, JsonProcessingException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         V1Beta1TektonPipeline pipeline = V1Beta1TektonPipeline.builder()
                 .apiVersion("tekton.dev/v1beta1")
@@ -189,7 +179,7 @@ public class K8sApiTestController {
                                     .name("maven-settings")
                                     .build());
                             add(V1Beta1TektonPipelineWorkspaceDeclaration.builder()
-                                    .name("code-repository")
+                                    .name("source")
                                     .build());
 
                         }})
@@ -199,8 +189,8 @@ public class K8sApiTestController {
                                     .taskRef(V1Beta1TektonPipelineTaskRef.builder().name("git-clone-test").build())
                                     .workspaces(new ArrayList<>() {{
                                         add(V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding.builder()
-                                                .name("code-repository")
-                                                .workspace("code-repository")
+                                                .name("source")
+                                                .workspace("source")
                                                 .build());
                                     }})
                                     .build());
@@ -209,24 +199,24 @@ public class K8sApiTestController {
                                     .taskRef(V1Beta1TektonPipelineTaskRef.builder()
                                             .name("maven")
                                             .build())
-                                    .params(new ArrayList<V1Beta1TektonRunParam>() {{
-                                        add(V1Beta1TektonRunParam.builder()
-                                                .name("CONTENT_DIR")
-                                                .value("/coding/repository/kubernetes-apiserver")
+                                    .params(new ArrayList<>() {{
+                                        add(V1Beta1TektonRunParam.<String>builder()
+                                                .name("CONTEXT_DIR")
+                                                .value("repository/psychology")
                                                 .build());
-                                        add(V1Beta1TektonRunParam.builder()
+                                        add(V1Beta1TektonRunParam.<List<String>>builder()
                                                 .name("GOALS")
-                                                .value(new ArrayList<>() {{
-                                                    add("-DskipTests");
-                                                    add("clean");
-                                                    add("package");
-                                                }})
+                                                .value(Stream.of("-DskipTests","clean","package").toList())
                                                 .build());
                                     }})
                                     .workspaces(new ArrayList<>() {{
                                         add(V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding.builder()
                                                 .name("maven-settings")
                                                 .workspace("maven-settings")
+                                                .build());
+                                        add(V1Beta1TektonPipelineTask.WorkspacePipelineTaskBinding.builder()
+                                                .name("source")
+                                                .workspace("source")
                                                 .build());
                                     }})
 
@@ -237,15 +227,14 @@ public class K8sApiTestController {
 
 
 
-        System.out.println(yamlObjectMapper.writeValueAsString(pipeline));
-        System.out.println(new JSON().serialize(pipeline));
         CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+
         Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_PIPELINE.getGroup() ,EnumCustomResource.TEKTON_PIPELINE.getVersion(),
                 "test", EnumCustomResource.TEKTON_PIPELINE.getPlural(),pipeline,null,null,null);
         System.out.println(yamlObjectMapper.writeValueAsString(result));
     }
 
-    public void createMavenSettingConfigMap(ApiClient apiClient) throws ApiException {
+    public void createMavenSettingConfigMap(ApiClient apiClient) throws ApiException, JsonProcessingException {
 
         CoreV1Api coreV1Api = new CoreV1Api(apiClient);
 
@@ -256,9 +245,10 @@ public class K8sApiTestController {
         configMap.setBinaryData(new HashMap<>() {{
             put("settings.xml",mavensetting.getBytes(StandardCharsets.UTF_8));
         }});
-        
-        coreV1Api.createNamespacedConfigMap("test",configMap, null,null,null,null);
 
+        V1ConfigMap v1ConfigMap = coreV1Api.createNamespacedConfigMap("test",configMap, null,null,null,null);
+
+        System.out.println(yamlObjectMapper.writeValueAsString(v1ConfigMap));
     }
 
 
@@ -296,6 +286,10 @@ public class K8sApiTestController {
                 .kind("Task")
                 .metadata(new V1ObjectMeta().name("git-clone-test"))
                 .spec(V1Beta1TektonTaskSpec.builder()
+                        .workspaces(new ArrayList<>() {{add(V1Beta1TektonWorkSpaceDeclaration.builder()
+                                .name("source")
+                                .description("代码存放目录")
+                                .build());}})
                         .steps(new ArrayList<>() {{
                             add(V1Beta1TektonStep.builder()
                                     .name("git-clone")
@@ -303,20 +297,18 @@ public class K8sApiTestController {
                                     .script("""
                                             #!/usr/bin/env sh
                                             set -eu
+                                            [[ -d psychology ]] && \
+                                            cd psychology && git pull && exit 0
+                                            echo $PWD > path.txt
                                             git clone $(params.url)
                                             """)
-                                    .workingDir("/coding/repository")
+                                    .workingDir("$(workspaces.source.path)/repository")
                                     .build());
                         }})
-                        .workspaces(new ArrayList<>() {{add(V1Beta1TektonWorkSpaceDeclaration.builder()
-                                .name("code-repository")
-                                .description("代码存放目录")
-                                .mountPath("/coding")
-                                .build());}})
                         .params(new ArrayList<>() {{add(V1Beta1TektonParam.<String>builder()
                                 .name("url")
                                 .type("string")
-                                .defaultValue("https://github.com/coding-myk/kubernetes-apiserver.git")
+                                .defaultValue("https://gitee.com/loita/psychology.git")
                                 .build());}})
                         .build())
 
