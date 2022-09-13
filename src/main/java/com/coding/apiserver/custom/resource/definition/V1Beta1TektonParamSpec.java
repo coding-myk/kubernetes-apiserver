@@ -17,20 +17,20 @@ public class V1Beta1TektonParamSpec<T> {
 
 
 
-    @ApiModelProperty(value = "参数名称")
+    @ApiModelProperty(value = "参数名称" ,position = 0)
     private String name;
 
-    @ApiModelProperty(value = "参数类型", notes = "string, array , object; 默认是string")
+    @ApiModelProperty(value = "参数类型", notes = "string, array , object; 默认是string" ,position = 1)
     private String type;
 
-    @ApiModelProperty(value = "参数描述")
+    @ApiModelProperty(value = "参数描述" ,position = 2)
     private String description;
 
-    @ApiModelProperty(value = "默认值")
+    @ApiModelProperty(value = "默认值" ,position = 3)
     @SerializedName("default")
     private T defaultValue;
 
-    @ApiModelProperty(value = "参数类型描述 JSON Schema 属性")
+    @ApiModelProperty(value = "参数类型描述 JSON Schema 属性" ,position = 4)
     private Map<String,Object> properties;
 
 }

@@ -15,78 +15,78 @@ import java.util.List;
 @Data
 public class V1Beta1TektonSidecar {
 
-    @ApiModelProperty(value = "步骤名称")
+    @ApiModelProperty(value = "步骤名称" ,position = 0)
     private String name;
 
-    @ApiModelProperty(value = "镜像")
+    @ApiModelProperty(value = "镜像" ,position = 1)
     private String image;
 
-    @ApiModelProperty(value = "镜像的执行命令", notes = "如果没有则使用镜像内部的 ENTRYPOINT。更多详情：https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell")
+    @ApiModelProperty(value = "镜像的执行命令", notes = "如果没有则使用镜像内部的 ENTRYPOINT。更多详情：https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell" ,position = 2)
     private List<String> command;
 
-    @ApiModelProperty(value = "命令参数", notes = "如果没有则使用镜像中的 CMD ")
+    @ApiModelProperty(value = "命令参数", notes = "如果没有则使用镜像中的 CMD " ,position = 3)
     private List<String> args;
 
-    @ApiModelProperty(value = "工作空间", notes = "该步骤的工作目录，没有则创建文件夹。未提供则使用容器默认的")
+    @ApiModelProperty(value = "工作空间", notes = "该步骤的工作目录，没有则创建文件夹。未提供则使用容器默认的" ,position = 4)
     private String workingDir;
 
-    @ApiModelProperty(value = "sidecar 端口 暴漏列表")
+    @ApiModelProperty(value = "sidecar 端口 暴漏列表" ,position = 5)
     private List<V1ContainerPort> ports;
 
-    @ApiModelProperty(value = "环境变量来源列表，例如configmap", notes = "详情见：https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#envfromsource-v1-core")
+    @ApiModelProperty(value = "环境变量来源列表，例如configmap", notes = "详情见：https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#envfromsource-v1-core" ,position = 6)
     private List<V1EnvFromSource> envFrom;
 
-    @ApiModelProperty(value = "环境变量列表")
+    @ApiModelProperty(value = "环境变量列表" ,position = 7)
     private List<V1EnvVar> env;
 
-    @ApiModelProperty(value = "资源配额")
+    @ApiModelProperty(value = "资源配额" ,position = 8)
     private V1ResourceRequirements resources;
 
-    @ApiModelProperty(value = "step 的 文件卷")
+    @ApiModelProperty(value = "step 的 文件卷" ,position = 9)
     private List<V1VolumeMount> volumeMounts;
 
-    @ApiModelProperty(value = "step 使用的块设备列表")
+    @ApiModelProperty(value = "step 使用的块设备列表" ,position = 10)
     private List<V1VolumeDevice> volumeDevices;
 
-    @ApiModelProperty(value = "健康探针")
+    @ApiModelProperty(value = "健康探针" ,position = 11)
     private V1Probe livenessProbe;
 
-    @ApiModelProperty(value = "就绪探针")
+    @ApiModelProperty(value = "就绪探针" ,position = 12)
     private V1Probe readinessProbe;
 
-    @ApiModelProperty(value = "启动探针",notes = "kubernetes 1.16新增的，如果提供了启动探测，则禁用其他所有探针，直到他它成功为止。如果启动探测失败，容器则重启")
+    @ApiModelProperty(value = "启动探针",notes = "kubernetes 1.16新增的，如果提供了启动探测，则禁用其他所有探针，直到他它成功为止。如果启动探测失败，容器则重启" ,position = 13 )
     private V1Probe startupProbe;
 
-    @ApiModelProperty(value = "生命周期")
+    @ApiModelProperty(value = "生命周期" ,position = 14)
     private V1Lifecycle lifecycle;
 
-    @ApiModelProperty(value = "sidecar 终止消息写入本地文件地址，默认/dev/termination-log",notes = "消息大于 4096 bytes会被截断，所有容器的限制是12kb")
+    @ApiModelProperty(value = "sidecar 终止消息写入本地文件地址，默认/dev/termination-log",notes = "消息大于 4096 bytes会被截断，所有容器的限制是12kb" ,position = 15)
     private String terminationMessagePath;
 
     @ApiModelProperty(value = "sidecar 终止消息策略", notes = "File ；FallbackToLogsOnError。默认是 File," +
             " File 将使用terminationMessagePath，适用于无论sidecar成功还是失败。" +
-            " FallbackToLogsOnError 将使用 Sidecar 日志输出的最后一块。日志输出限制为 2048 字节或 80 行，以较小者为准。适用于sidecar因错误退出 ")
+            " FallbackToLogsOnError 将使用 Sidecar 日志输出的最后一块。日志输出限制为 2048 字节或 80 行，以较小者为准。适用于sidecar因错误退出 " ,position = 16)
     private String terminationMessagePolicy;
 
-    @ApiModelProperty(value = "镜像拉去策略")
+    @ApiModelProperty(value = "镜像拉去策略" ,position = 17)
     private String imagePullPolicy;
 
-    @ApiModelProperty(value = "SecurityContext 定义了 Step 应该运行的安全选项" ,notes = "如果设置，SecurityContext 的字段将覆盖 PodSecurityContext 的等效字")
+    @ApiModelProperty(value = "SecurityContext 定义了 Step 应该运行的安全选项" ,notes = "如果设置，SecurityContext 的字段将覆盖 PodSecurityContext 的等效字" ,position = 18)
     private V1SecurityContext securityContext;
 
-    @ApiModelProperty(value = "此 Sidecar 是否应在容器运行时中为 stdin 分配缓冲区" , notes = "如果未设置，从 Sidecar 中的标准输入读取将始终导致 EOF。默认为 false")
+    @ApiModelProperty(value = "此 Sidecar 是否应在容器运行时中为 stdin 分配缓冲区" , notes = "如果未设置，从 Sidecar 中的标准输入读取将始终导致 EOF。默认为 false" ,position = 19)
     private Boolean stdin;
 
     @ApiModelProperty(value = "容器运行时是否应在单个附加打开标准输入通道后关闭它", notes = "当 stdin 为 true 时，stdin 流将在多个附加会话中保持打开状态。如果 stdinOnce 设置为 true，则 stdin 在 Sidecar 启动时打开，为空直到第一个客户端连接到 stdin，然后保持打开并接受数据直到客户端断开连接，此时 stdin 关闭并保持关闭直到 Sidecar 重新启动." +
-            "如果此标志为 false，则从标准输入读取的容器进程将永远不会收到 EOF。默认为 false")
+            "如果此标志为 false，则从标准输入读取的容器进程将永远不会收到 EOF。默认为 false" ,position = 20)
     private Boolean stdinOnce;
 
-    @ApiModelProperty(value = "sidecar是否也为自己分配个 TTY ，默认false")
+    @ApiModelProperty(value = "sidecar是否也为自己分配个 TTY ，默认false" ,position = 21)
     private Boolean tty;
 
-    @ApiModelProperty(value = "sidecar 执行脚本")
+    @ApiModelProperty(value = "sidecar 执行脚本" ,position = 22)
     private String script;
 
-    @ApiModelProperty(value = "step独占的 workspace 列表" ,notes = "该字段是alpha的字段，必须设置 enable")
+    @ApiModelProperty(value = "step独占的 workspace 列表" ,notes = "该字段是alpha的字段，必须设置 enable" ,position = 23)
     private List<V1Beta1TektonWorkspaceUsage> workspaces;
 }
