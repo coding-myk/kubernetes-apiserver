@@ -1,6 +1,7 @@
 package com.coding.apiserver.custom.resource.definition;
 
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +15,10 @@ import java.util.List;
 @Data
 public class V1Beta1TektonRunParam<T> {
 
+    @ApiModelProperty(value = "name", position = 0)
     private String name;
 
+    @ApiModelProperty(value = "参数值", position = 1)
     private T value;
 
 

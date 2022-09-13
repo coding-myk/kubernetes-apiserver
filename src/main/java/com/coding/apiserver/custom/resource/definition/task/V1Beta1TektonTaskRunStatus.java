@@ -35,7 +35,7 @@ public class V1Beta1TektonTaskRunStatus {
 
     private List<V1Beta1TektonSidecarState> sidecars;
 
-    private V1Beta1TektonTaskRunSpec.TaskSpec taskSpec;
+    private V1Beta1TektonTaskSpec taskSpec;
 
 
 

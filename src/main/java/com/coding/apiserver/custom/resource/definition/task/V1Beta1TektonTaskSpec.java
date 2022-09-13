@@ -34,11 +34,11 @@ public class V1Beta1TektonTaskSpec {
     @ApiModelProperty(value = "task 的 sidecar", notes = "Sidecar 与 Task 的 step 容器一起运行。它们在步骤开始之前开始，在步骤完成之后结束" ,position = 5)
     private List<V1Beta1TektonSidecar> sidecars;
 
-    @ApiModelProperty(value = "step 结果输出", notes = "结果是此任务可以输出的值" ,position = 6)
-    private List<V1Beta1TektonTaskResult> results;
-
-    @ApiModelProperty(value = "该任务的所有workspace 声明" ,position = 7)
+    @ApiModelProperty(value = "该任务的所有workspace 声明" ,position = 6)
     private List<V1Beta1TektonWorkSpaceDeclaration> workspaces;
+
+    @ApiModelProperty(value = "step 结果输出", notes = "结果是此任务可以输出的值" ,position = 7)
+    private List<V1Beta1TektonTaskResult> results;
 
 
 }
