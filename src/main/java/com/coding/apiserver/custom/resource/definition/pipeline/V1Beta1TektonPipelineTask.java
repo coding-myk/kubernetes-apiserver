@@ -48,7 +48,7 @@ public class V1Beta1TektonPipelineTask {
 
         private V1Beta1TektonPipelineTaskMetadata metadata;
 
-        private List<V1Beta1TektonParam<?>> params;
+        private List<V1Beta1TektonParamSpec<?>> params;
 
         private String description;
 

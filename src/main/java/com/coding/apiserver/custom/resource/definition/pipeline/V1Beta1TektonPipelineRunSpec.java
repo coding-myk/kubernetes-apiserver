@@ -79,7 +79,7 @@ public class V1Beta1TektonPipelineRunSpec {
 
         private List<V1Beta1TektonPipelineTask> pipelineTask;
 
-        private List<V1Beta1TektonParam<?>> params;
+        private List<V1Beta1TektonParamSpec<?>> params;
 
         private List<V1Beta1TektonPipelineWorkspaceDeclaration> workspaces;
 

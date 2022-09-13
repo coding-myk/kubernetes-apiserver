@@ -1,7 +1,7 @@
 package com.coding.apiserver.custom.resource.definition.pipeline;
 
 
-import com.coding.apiserver.custom.resource.definition.V1Beta1TektonParam;
+import com.coding.apiserver.custom.resource.definition.V1Beta1TektonParamSpec;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ public class V1Beta1TektonPipelineSpec {
 
     private List<V1Beta1TektonPipelineTask> tasks;
 
-    private List<V1Beta1TektonParam<?>> params;
+    private List<V1Beta1TektonParamSpec<?>> params;
 
     private List<V1Beta1TektonPipelineWorkspaceDeclaration> workspaces;
 

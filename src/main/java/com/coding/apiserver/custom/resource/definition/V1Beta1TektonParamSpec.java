@@ -13,24 +13,24 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @Data
-public class V1Beta1TektonParam<T> {
+public class V1Beta1TektonParamSpec<T> {
 
 
 
-    @SerializedName("name")
+    @ApiModelProperty(value = "参数名称")
     private String name;
 
-    @ApiModelProperty(value = "参数类型", notes = "string, arry , object")
-    @SerializedName("type")
+    @ApiModelProperty(value = "参数类型", notes = "string, array , object; 默认是string")
     private String type;
 
-    @SerializedName("description")
+    @ApiModelProperty(value = "参数描述")
     private String description;
 
+    @ApiModelProperty(value = "默认值")
     @SerializedName("default")
     private T defaultValue;
 
-    @SerializedName("properties")
+    @ApiModelProperty(value = "参数类型描述 JSON Schema 属性")
     private Map<String,Object> properties;
 
 }

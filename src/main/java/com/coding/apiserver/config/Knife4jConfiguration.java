@@ -1,6 +1,7 @@
 package com.coding.apiserver.config;
 
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
@@ -10,9 +11,11 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.lang.reflect.Field;
@@ -20,7 +23,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-@EnableSwagger2WebMvc
+@EnableKnife4j
+@EnableSwagger2
 public class Knife4jConfiguration {
 
     @Bean(value = "defaultApi2")
@@ -30,7 +34,7 @@ public class Knife4jConfiguration {
                         //.title("swagger-bootstrap-ui-demo RESTful APIs")
                         .description("# swagger-bootstrap-ui-demo RESTful APIs")
                         .termsOfServiceUrl("http://www.xx.com/")
-                        .contact("xx@qq.com")
+                        .contact(new Contact("ailuoli","","2665151959@qq.com"))
                         .version("1.0")
                         .build())
                 //分组名称
@@ -56,8 +60,7 @@ public class Knife4jConfiguration {
 
             private <T extends RequestMappingInfoHandlerMapping> void customizeSpringfoxHandlerMappings(List<T> mappings) {
                 List<T> copy = mappings.stream()
-                        .filter(mapping -> mapping.getPatternParser() == null)
-                        .collect(Collectors.toList());
+                        .filter(mapping -> mapping.getPatternParser() == null).toList();
                 mappings.clear();
                 mappings.addAll(copy);
             }

@@ -63,7 +63,7 @@ public class V1Beta1TektonTaskRunSpec {
     @Data
     public static class TaskSpec {
 
-        private List<V1Beta1TektonParam<?>> params;
+        private List<V1Beta1TektonParamSpec<?>> params;
 
         private String description;
 

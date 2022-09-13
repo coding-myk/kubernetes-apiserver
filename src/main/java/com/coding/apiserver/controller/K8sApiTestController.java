@@ -11,20 +11,10 @@ import com.coding.apiserver.custom.resource.definition.task.*;
 import com.coding.apiserver.models.enums.EnumCustomResource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
-import com.google.protobuf.Type;
-import com.google.protobuf.TypeOrBuilder;
-import io.gsonfire.GsonFireBuilder;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.custom.Quantity;
-import io.kubernetes.client.gson.V1StatusPreProcessor;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.JSON;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.apis.CustomObjectsApi;
 import io.kubernetes.client.openapi.models.*;
@@ -35,13 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -305,7 +289,7 @@ public class K8sApiTestController {
                                     .workingDir("$(workspaces.source.path)/repository")
                                     .build());
                         }})
-                        .params(new ArrayList<>() {{add(V1Beta1TektonParam.<String>builder()
+                        .params(new ArrayList<>() {{add(V1Beta1TektonParamSpec.<String>builder()
                                 .name("url")
                                 .type("string")
                                 .defaultValue("https://gitee.com/loita/psychology.git")
