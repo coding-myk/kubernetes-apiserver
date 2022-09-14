@@ -300,6 +300,7 @@ public class K8sApiTestController {
 
 
 
+
         System.out.println(yamlObjectMapper.writeValueAsString(task));
         CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
         Object result = customObjectsApi.createNamespacedCustomObject(EnumCustomResource.TEKTON_TASK.getGroup() ,EnumCustomResource.TEKTON_TASK.getVersion(),
