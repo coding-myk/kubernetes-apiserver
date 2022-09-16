@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -102,7 +103,7 @@ public class K8sApiTestController {
 //        //创建task run
 //        createTektonTaskRun();
 
-        createGitCloneTask();
+//        createGitCloneTask();
 //        createGitCloneTaskRun();
 //
 //        //创建maven settings
@@ -124,9 +125,13 @@ public class K8sApiTestController {
         V1Beta1TektonPipelineRun pipelineRun = V1Beta1TektonPipelineRun.builder()
                 .apiVersion("tekton.dev/v1beta1")
                 .kind("PipelineRuns")
-                .metadata(new V1ObjectMeta().name("devops"))
+                .metadata(new V1ObjectMeta().name("devops" + System.currentTimeMillis()))
                 .spec(V1Beta1TektonPipelineRunSpec.builder()
                         .pipelineRef(V1Beta1TektonPipelineRunSpec.PipelineRef.builder().name("test-pipeline").build())
+                        .podTemplate(V1Beta1TektonPodTemplate.builder()
+                                .nodeSelector(new HashMap<>() {{ put("coding","myk"); }})
+                                .build())
+
                         .workspaces(new ArrayList<>() {{
 
                             add(V1Beta1TektonWorkspaceBinding.builder()
@@ -135,9 +140,8 @@ public class K8sApiTestController {
                                     .build());
                             add(V1Beta1TektonWorkspaceBinding.builder()
                                     .name("source")
-                                    .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder()
-                                            .claimName("tekton-pvc-test")
-                                            .build())
+                                    .persistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource()
+                                            .claimName("tekton-pvc-test"))
                                     .build());
 
                         }})
@@ -248,7 +252,7 @@ public class K8sApiTestController {
                                 .value("https://github.com/coding-myk/kubernetes-apiserver.git")
                                 .build());}})
                         .workspaces(new ArrayList<>() {{add(V1Beta1TektonWorkspaceBinding.builder()
-                                .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder().claimName("tekton-pvc-test").build())
+                                .persistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName("tekton-pvc-test"))
                                 .name("coding")
                                 .build()); }})
                         .build())
@@ -365,8 +369,8 @@ public class K8sApiTestController {
 //                                                .accessModes(new ArrayList<>(){{add("ReadWriteOnce");}})
 //                                                .resources(new V1ResourceRequirements().requests(new HashMap<>() {{put("storage",new Quantity("1Gi"));}})))
 //                                        .build())
-                                .persistentVolumeClaim(V1Beta1TektonWorkspaceBinding.PersistentVolumeClaim.builder()
-                                        .claimName("tekton-pvc-test").build())
+                                .persistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource()
+                                        .claimName("tekton-pvc-test"))
                                 .name("workspacepvctest")
                                 .build()))
                         .build())
