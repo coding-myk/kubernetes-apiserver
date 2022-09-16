@@ -21,7 +21,7 @@ public class V1Beta1TektonTask{
     @ApiModelProperty(value = "kind",notes = "Task", example = "Task",position = 1)
     private String kind;
 
-    @ApiModelProperty(value = "metadata",notes = "kubernetes 对象 metadata",position = 2)
+    @ApiModelProperty(value = "metadata",notes = "kubernetes 对象 metadata", reference = "metadata",position = 2)
     private V1ObjectMeta metadata;
 
     @ApiModelProperty(value = "spec",notes = "task 的 详细设置参数等",position = 3)
